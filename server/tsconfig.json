@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "forceConsistentCasingInFileNames": true,
+      "sourceMap": true,
+      "target": "esnext",
+      "module": "commonjs",
+      "outDir": "./dist",
+      "baseUrl": "./src",
+      "rootDirs": ["src"],
+      "paths": {
+        "src/*": ["./src/*"]
+      },
+      "moduleResolution": "node",
+      "skipLibCheck": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "lib": [
+        "es5",
+        "ES2015.Core"
+      ],
+    },
+    "include": [
+      "src/**/*.ts", "./jest.config.js", ".eslintrc.js",
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
