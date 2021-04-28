@@ -1,13 +1,15 @@
 import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import './App.css';
+import Chat from './components/chat/Chat';
+import Login from './components/login/Login';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">s</header>
-    </div>
-  );
-}
+const App: React.FC = () => (
+  <Router>
+    <Route path="/" exact component={Login} />
+    <Route path="/chat" component={Chat} />
+  </Router>
+);
 
 export default App;

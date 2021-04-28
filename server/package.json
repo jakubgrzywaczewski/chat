@@ -16,9 +16,11 @@
     "@types/cors": "^2.8.10",
     "@types/helmet": "^4.0.0",
     "@types/node": "^15.0.1",
+    "@types/socket.io": "^2.1.13",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^4.5.0",
+    "socket.io": "^4.0.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   },
