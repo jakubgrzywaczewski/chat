@@ -9,29 +9,19 @@ import { ROUTES } from './common/constants';
 
 class App {
   public app: express.Application;
-  public server;
-  public io;
   public port: number;
+  private httpServer;
 
   constructor(routes: express.Router[], port: number) {
     this.app = express();
-    this.server = http.createServer(this.app);
-    this.io = new Server(this.server);
-    this.port = port;
-
-    this.initializeMiddlewares();
-    this.initializeRoutes(routes);
-  }
-
-  private initializeMiddlewares() {
-    this.app.use(
-      cors({
-        origin: ROUTES.DOMAIN,
-        credentials: true,
-      }),
-    );
-
+    this.app.use(cors());
     this.app.use(helmet());
+
+    this.port = port;
+    this.httpServer = http.createServer(this.app);
+
+    this.initializeSockets();
+    this.initializeRoutes(routes);
   }
 
   private initializeRoutes(routes) {
@@ -40,8 +30,22 @@ class App {
     });
   }
 
+  private initializeSockets() {
+    const io = new Server(this.httpServer, {
+      cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+      },
+    });
+
+    io.on('connection', (socket) => {
+      console.log('socket connected');
+      socket.on('disconnect', () => console.log('socket disconnected'));
+    });
+  }
+
   public listen(): void {
-    this.app.listen(this.port, () => {
+    this.httpServer.listen(this.port, () => {
       console.log(`App listening on the port ${this.port}`);
     });
   }
