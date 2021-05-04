@@ -1,5 +1,3 @@
-const users = [];
-
 type User = {
   id: string;
   name: string;
@@ -9,6 +7,8 @@ type User = {
 type Error = {
   error: string;
 };
+
+let users: Array<User>;
 
 const addUser = ({ id, name, room }: User): Error | User => {
   name = name.trim().toLowerCase();
@@ -26,7 +26,7 @@ const addUser = ({ id, name, room }: User): Error | User => {
   return user;
 };
 
-const removeUser = (id: string): string[] => {
+const removeUser = (id: string): User => {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
@@ -34,8 +34,8 @@ const removeUser = (id: string): string[] => {
   }
 };
 
-const getUser = (id: string): number | undefined => users.find((user) => user.id === id);
+const getUser = (id: string): User | undefined => users.find((user) => user.id === id);
 
-const getUsersInRoom = (room: string): string[] => users.filter((user) => user.room === room);
+const getUsersInRoom = (room: string): User[] => users.filter((user) => user.room === room);
 
 export { addUser, removeUser, getUser, getUsersInRoom };

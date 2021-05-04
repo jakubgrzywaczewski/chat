@@ -5,7 +5,8 @@ import * as http from 'http';
 
 import { Server } from 'socket.io';
 
-import { ROUTES } from './common/constants';
+import { ROUTES, SOCKET_EVENTS } from './common/constants';
+import { addUser, getUser, getUsersInRoom, removeUser } from './services/users';
 
 class App {
   public app: express.Application;
@@ -38,12 +39,45 @@ class App {
       },
     });
 
-    io.on('connection', (socket) => {
-      socket.on('join_room', ({ name, room }) => {
-        console.log(name, room);
+    io.on(SOCKET_EVENTS.CONNECT, (socket) => {
+      socket.on(SOCKET_EVENTS.JOIN, ({ name, room }, callback) => {
+        const { id } = socket;
+        const result = addUser({ id, name, room });
+
+        if ('error' in result) {
+          callback(result.error);
+        }
+
+        socket.emit(SOCKET_EVENTS.MESSAGE, { user: 'Chatbot', text: `Hi, ${name}` });
+        socket.broadcast
+          .to(room)
+          .emit(SOCKET_EVENTS.MESSAGE, { user: 'Chatbot', text: `${name} has joined the room` });
+        socket.join(room);
+
+        callback();
       });
 
-      socket.on('disconnect', () => console.log('socket disconnected'));
+      socket.on(SOCKET_EVENTS.SEND_MESSAGE, (message, callback) => {
+        const user = getUser(socket.id);
+
+        io.to(user.room).emit(SOCKET_EVENTS.MESSAGE, { user: user.name, text: message });
+        callback();
+      });
+
+      socket.on(SOCKET_EVENTS.DISCONNECT, () => {
+        const user = removeUser(socket.id);
+
+        if (user) {
+          io.to(user.room).emit(SOCKET_EVENTS.MESSAGE, {
+            user: 'Chatbot',
+            text: `${user.name} has left.`,
+          });
+          io.to(user.room).emit(SOCKET_EVENTS.USERS_DATA, {
+            room: user.room,
+            users: getUsersInRoom(user.room),
+          });
+        }
+      });
     });
   }
 
