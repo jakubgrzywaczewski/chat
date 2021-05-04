@@ -33,13 +33,16 @@ class App {
   private initializeSockets() {
     const io = new Server(this.httpServer, {
       cors: {
-        origin: 'http://localhost:3000',
+        origin: ROUTES.DOMAIN_URL,
         methods: ['GET', 'POST'],
       },
     });
 
     io.on('connection', (socket) => {
-      console.log('socket connected');
+      socket.on('join_room', ({ name, room }) => {
+        console.log(name, room);
+      });
+
       socket.on('disconnect', () => console.log('socket disconnected'));
     });
   }
